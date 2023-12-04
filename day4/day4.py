@@ -24,7 +24,7 @@ for i, line in enumerate(lines):
 	winners = lists[0].split()
 	mine = lists[1].split()
 
-	found = sum(n in winners for n in mine)
+	found = sum(n in mine for n in winners)
 	for j in range(i + 1, i + found + 1):
 		cards[j] = cards.get(j, 1) + cards[i]
 
