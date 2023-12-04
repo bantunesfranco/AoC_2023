@@ -1,5 +1,3 @@
-import re
-
 with open("input.txt") as f:
 	grid = f.read().splitlines()
 
