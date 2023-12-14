@@ -49,84 +49,34 @@ print(f"Part 1 output = {res}")
 
 ## Part 2
     
-def tilt_south(rounded):
-    rounded.sort(key=lambda x: (x[0], x[1]), reverse=True)
-    nrounded = []
-    for (x, y) in rounded:
-        i = y
-        while i < len(lines):
-            if i == len(lines) - 1:
-                nrounded.append((x, i))
-                break
-            if (lines[i + 1][x] == "#"):
-                nrounded.append((x, i))
-                break
-            if (x, i + 1) in nrounded:
-                nrounded.append((x, i))
-                break
-            i += 1
-    return list(set(nrounded))
 
-def tilt_east(rounded):
-    rounded.sort(key=lambda x: (x[1], x[0]), reverse=True)
-    nrounded = []
-    for (x, y) in rounded:
-        i = x
-        while i <= len(lines[y]):
-            if i == len(lines[y]) - 1:
-                nrounded.append((i, y))
-                break
-            if (lines[y][i + 1] == "#"):
-                nrounded.append((i, y))
-                break
-            if (i + 1, y) in nrounded:
-                nrounded.append((i, y))
-                break
-            i += 1
-    return list(set(nrounded))
-
-def tilt_west(rounded):
-    rounded.sort(key=lambda x: (x[1], x[0]))
-    nrounded = []
-    for (x, y) in rounded:
-        i = x
-        while i >= 0:
-            if i == 0:
-                nrounded.append((i, y))
-                break
-            if (lines[y][i - 1] == "#"):
-                nrounded.append((i, y))
-                break
-            if (i - 1, y) in nrounded:
-                nrounded.append((i, y))
-                break
-            i -= 1
-    return list(set(nrounded))
-
-grid = lines
-grids = []
-while True:
-
+def spin(rounded, cube):
+    global grid
     rounded = tilt_north(rounded)
-    grid = make_grid(rounded, cube, grid)
+    grid = tuple(map("".join, zip(*make_grid(rounded, cube, grid))))
+    for _ in range(2):
+        rounded = tilt_north(rounded)
+        grid = tuple(map("".join, zip(*make_grid(rounded, cube, grid)[::-1])))
+    rounded = tilt_north(rounded)
+    return tuple(map("".join, zip(*make_grid(rounded, cube, grid)[::-1])))
 
-    rounded = tilt_west(rounded)
-    grid = make_grid(rounded, cube, grid)
+grid = tuple(lines)
+grids = {grid}
+iter = 0
 
-    rounded = tilt_south(rounded)
-    grid = make_grid(rounded, cube, grid)
+for i in range(1, 1000000000):
 
-    rounded = tilt_east(rounded)
-    grid = make_grid(rounded, cube, grid)
-
-    res = 0
-    for j, line in enumerate(grid):
-        res += line.count("O") * (len(grid) - j)
-
-    print(res)
+    spin(rounded, cube)
+    for l in grid:
+        print(l)
     if grid in grids:
         break
+    print(i)
+    grids.add(grid)
 
-    grids.append(grid)
+res = 0
+for j, line in enumerate(grid):
+    res += line.count("O") * (len(grid) - j)
 
-print(res)
+print(f"Part 2 output = {res}")
+    
